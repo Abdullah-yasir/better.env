@@ -1,0 +1,18 @@
+DEV:
+	HOST="localhost"
+	PORT=5000
+	DB:
+		HOST="mysql"
+		NAME="test"
+		USERNAME="admin"
+		PASSWORD=123456
+	SOME=5
+
+PROD:
+	HOST="app.cool.com"
+	PORT=8080
+	DB:
+		HOST="mysql"
+		NAME="prod_db"
+		USERNAME="admin"
+		PASSWORD="123456_@strongPas."
