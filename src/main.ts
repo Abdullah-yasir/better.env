@@ -4,7 +4,7 @@ import Environment from "./runtime/environment"
 import { evaluate } from "./runtime/interpreter"
 
 import Parser from "./frontend/parser"
-import Tokenizer from "./frontend/lexer/tokenizer"
+import Tokenizer, { Organizer } from "./frontend/lexer/tokenizer"
 import { specs } from "./frontend/lexer/specs"
 
 import { PackageInfo } from "./types"
@@ -49,15 +49,18 @@ async function run(filename: string) {
 
   const tokens = tokenizer.tokenize(input)
 
-  emitTempFile("tokens.json", JSON.stringify(tokens))
+  const indents = new Organizer().organize(tokens)
 
-  const program = parser.produceAST(tokens)
+  await emitTempFile("tokens.json", JSON.stringify(tokens))
+  await emitTempFile("indented.json", JSON.stringify(indents.tokens))
+  await emitTempFile("filtered.json", JSON.stringify(indents.filter().tokens))
+
+  const program = parser.produceAST(indents.filter().tokens)
+  await emitTempFile("ast.json", JSON.stringify(program))
 
   evaluate(program, env)
 
   transpile(filename, env)
-
-  emitTempFile("ast.json", JSON.stringify(program))
 }
 
 function showHelp(info: PackageInfo) {

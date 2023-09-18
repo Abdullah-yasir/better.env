@@ -14,7 +14,7 @@ import {
 } from "./ast"
 import { Placholder } from "../helpers"
 import { TokenType, specs } from "./lexer/specs"
-import Tokenizer, { Token } from "./lexer/tokenizer"
+import Tokenizer, { Token } from "./lexer/_tokenizer"
 
 export default class Parser {
   constructor(tokens?: Token[]) {
@@ -82,7 +82,7 @@ export default class Parser {
 
     const block: Stmt[] = []
 
-    while (!TokenType.Dedent) block.push(this.parse_stmt())
+    while (this.at().type !== TokenType.Dedent) block.push(this.parse_stmt())
 
     this.expect(TokenType.Dedent, "Unexpected ending of indented code block")
 

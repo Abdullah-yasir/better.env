@@ -51,3 +51,14 @@ export const readInfo = (): Promise<PackageInfo> => {
     })
   })
 }
+
+export function insertAtIndex<T>(array: T[], index: number, element: T): T[] {
+  if (index < 0 || index > array.length) {
+    throw new Error("Index is out of range")
+  }
+
+  // Use splice to insert the element at the specified index
+  array.splice(index, 0, element)
+
+  return array
+}

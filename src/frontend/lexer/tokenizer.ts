@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { InvalidIndentationError } from "../../error"
+import { insertAtIndex } from "../../helpers"
+import { Queue } from "../../queue"
 import { Spec, TokenType } from "./specs"
 
 export type Token = {
@@ -11,11 +12,8 @@ export type Token = {
 }
 
 export default class Tokenizer {
-  private MAX_QUEUE_LEN = 2
-
   private _spec: Spec[]
   private _tokens: Token[] = []
-  private _tokenTypesQueue: TokenType[] = []
 
   private _cursor = 0
   private _line = 1 // current line
@@ -23,10 +21,6 @@ export default class Tokenizer {
 
   private _code = ""
   private _filename = ""
-
-  private _tabSize = 0
-  private _indentation = 0
-  private _isIndentMode = false
 
   constructor(spec: Spec[], filename: string) {
     this._spec = spec
@@ -75,25 +69,6 @@ export default class Tokenizer {
         this._tokenNumber = 0
       }
 
-      if (tokenType == TokenType.WhiteSpace) {
-        const indent = this._handleIndentation(tokenValue)
-        if (indent) return
-      }
-
-      if (this._isIndentMode) {
-        const dedent = this._handleDedentation(tokenValue, tokenType)
-        if (dedent) return
-      }
-
-      if (
-        tokenType == TokenType.EOL ||
-        tokenType == TokenType.SingleLineComment ||
-        tokenType == TokenType.WhiteSpace
-      ) {
-        this._updateQueue(tokenType)
-        return
-      }
-
       if (tokenType == TokenType.StringLiteral) {
         tokenValue = tokenValue.substring(1, tokenValue.length - 1)
       }
@@ -123,86 +98,123 @@ export default class Tokenizer {
     return matched[0]
   }
 
-  private _updateQueue(tokenType: TokenType) {
-    const queueLen = this._tokenTypesQueue.length
-
-    if (queueLen == this.MAX_QUEUE_LEN) this._tokenTypesQueue.shift()
-
-    this._tokenTypesQueue.push(tokenType)
-  }
-
   private _pushToken(token: Token) {
     this._tokens.push(token)
-    this._updateQueue(token.type)
+  }
+}
+
+export class Organizer {
+  private _tokens: Token[] = []
+
+  get tokens() {
+    return this._tokens
   }
 
-  private _handleIndentation(tokenValue: string) {
-    const q = this._tokenTypesQueue
-    const whitespace = tokenValue.length
+  organize(tokens: Token[]): Organizer {
+    const indentQ = new Queue<TokenType>(3)
+    const nestedIndentQ = new Queue<TokenType>(5)
+    const rootKeyValQ = new Queue<TokenType>(3)
 
-    if (q.length != this.MAX_QUEUE_LEN) return false
+    let indentWidth = 0
 
-    // handle indent start
-    if (q[0] != TokenType.Colon || q[1] != TokenType.EOL) return false
+    for (const token of tokens) {
+      this._tokens.push(token)
 
-    // remove ':' token so it doesn't bother us in parser
-    if (this._tokens.at(-1)?.type == TokenType.Colon) this._tokens.pop()
+      indentQ.enqueue(token.type)
+      nestedIndentQ.enqueue(token.type)
+      rootKeyValQ.enqueue(token.type)
 
-    if (this._tabSize == 0) this._tabSize = whitespace
+      if (isIndent(indentQ)) {
+        // if new indent is started, and indentWidth is already > 0
+        // then push dedent for each indentWidth
+        if (!isNestedIndent(nestedIndentQ)) {
+          for (let i = indentWidth; i > 0; i--) {
+            insertAtIndex(this._tokens, this._tokens.length - 4, {
+              type: TokenType.Dedent,
+              value: "auto dedent",
+              column: token.column + 1,
+              line: token.column,
+            })
+          }
+        }
 
-    if (whitespace % this._tabSize != 0) throw InvalidIndentationError(this._tabSize, this._line)
+        indentWidth = token.value.length
 
-    if (whitespace > this._indentation) {
-      this._indentation += this._tabSize
-      this._isIndentMode = true
-
-      this._pushToken({
-        type: TokenType.Indent,
-        value: whitespace,
-        column: this._tokenNumber,
-        line: this._line,
-      })
-
-      return true
-    }
-
-    return false
-  }
-
-  private _handleDedentation(tokenValue: any, tokenType: TokenType) {
-    if (this._tokenTypesQueue[1] != TokenType.EOL) return false
-
-    if (tokenType == TokenType.WhiteSpace) {
-      const whitespace = tokenValue.length
-
-      if (whitespace < this._indentation) {
-        this._indentation -= this._tabSize
-
-        this._pushToken({
-          type: TokenType.Dedent, // TokenType.Dedent
-          value: tokenValue,
-          column: this._tokenNumber,
-          line: this._line,
+        this._tokens.push({
+          type: TokenType.Indent,
+          value: "indent",
+          column: token.column + 1,
+          line: token.column,
         })
+      }
 
-        return true
+      if (token.type === TokenType.WhiteSpace) {
+        if (token.value.length < indentWidth) {
+          indentWidth = token.value.length
+          this._tokens.push({
+            type: TokenType.Dedent,
+            value: "dedent",
+            column: token.column + 1,
+            line: token.column,
+          })
+        }
+      }
+
+      if (isRootKeyVal(rootKeyValQ)) {
+        for (let i = indentWidth; i > 0; i--) {
+          insertAtIndex(this._tokens, this._tokens.length - 4, {
+            type: TokenType.Dedent,
+            value: "auto dedent",
+            column: token.column + 1,
+            line: token.column,
+          })
+        }
+
+        indentWidth = 0
       }
     }
 
-    // if (this._indentation == this._tabSize) {
-    //   this._indentation = 0
-    //   this._isIndentMode = false
-
-    //   this._pushToken({
-    //     type: TokenType.Dedent, // TokenType.Dedent
-    //     value: tokenValue,
-    //     column: this._tokenNumber,
-    //     line: this._line,
-    //   })
-
-    //   return true
-    // }
-
-    return false
+    return this
   }
+
+  filter() {
+    this._tokens = this._tokens.filter(({ type }, index) => {
+      const skippable = [TokenType.WhiteSpace, TokenType.SingleLineComment, TokenType.EOL].includes(
+        type
+      )
+
+      // skip colon token before indent token
+      const next = this._tokens[index + 1]
+      const indentColon = type === TokenType.Colon && next.type === TokenType.Indent
+
+      return !skippable && !indentColon
+    })
+
+    return this
+  }
+}
+
+function isIndent(q: Queue<TokenType>) {
+  return (
+    q.peek(0) === TokenType.Colon &&
+    q.peek(1) === TokenType.EOL &&
+    q.peek(2) === TokenType.WhiteSpace
+  )
+}
+
+function isNestedIndent(q: Queue<TokenType>) {
+  return (
+    q.peek(0) === TokenType.WhiteSpace &&
+    q.peek(2) === TokenType.Colon &&
+    q.peek(3) === TokenType.EOL &&
+    q.peek(4) === TokenType.WhiteSpace
+  )
+}
+
+function isRootKeyVal(q: Queue<TokenType>) {
+  return (
+    q.peek(0) === TokenType.EOL &&
+    q.peek(1) === TokenType.Identifier &&
+    q.peek(2) === TokenType.Equals
+  )
 }
