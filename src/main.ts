@@ -1,4 +1,4 @@
-import { readFileSync, writeFile } from "fs"
+import { readFileSync } from "fs"
 
 import Environment from "./runtime/environment"
 import { evaluate } from "./runtime/interpreter"
@@ -9,6 +9,7 @@ import { specs } from "./frontend/lexer/specs"
 
 import { PackageInfo } from "./types"
 import { validateFilename, emitTempFile, readInfo } from "./helpers"
+import { transpile } from "./runtime/transpiler"
 
 main()
 
@@ -47,16 +48,15 @@ async function run(filename: string) {
   const parser = new Parser()
   const tokenizer = new Tokenizer(specs, filename)
 
-  const tokens = tokenizer.tokenize(input)
+  let tokens = tokenizer.tokenize(input)
 
-  const indents = new Organizer().organize(tokens)
+  tokens = new Organizer().organize(tokens).filter().filter().tokens
 
-  await emitTempFile("tokens.json", JSON.stringify(tokens))
-  await emitTempFile("indented.json", JSON.stringify(indents.tokens))
-  await emitTempFile("filtered.json", JSON.stringify(indents.filter().tokens))
+  emitTempFile("tokens.json", JSON.stringify(tokens))
 
-  const program = parser.produceAST(indents.filter().tokens)
-  await emitTempFile("ast.json", JSON.stringify(program))
+  const program = parser.produceAST(tokens)
+
+  emitTempFile("ast.json", JSON.stringify(program))
 
   evaluate(program, env)
 
@@ -75,34 +75,4 @@ function showHelp(info: PackageInfo) {
   `
 
   console.log(h)
-}
-
-function transpile(filename: string, env: Environment) {
-  const generated = []
-
-  for (const [key, value] of env.varMap) {
-    if (value.type == "array") {
-      // @ts-ignore
-      value.elements.forEach((el, i) => {
-        generated.push({ key: `${key}_${i + 1}`, value: el })
-      })
-      continue
-    }
-    generated.push({ key, value: value })
-  }
-
-  const envText = generated
-    // @ts-ignore
-    .map(({ key, value }) => `${key}=${value.value}`)
-    .join("\n")
-
-  const __ = filename.split("/")
-
-  if (__.length) {
-    const _fname = __[__.length - 1].split(".")[0] + ".env"
-    writeFile(_fname, envText, { encoding: "utf-8" }, (err) => {
-      if (err) console.log("Unable to generate .env")
-      console.log("Generated:", _fname)
-    })
-  }
 }

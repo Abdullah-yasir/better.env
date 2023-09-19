@@ -6,6 +6,7 @@ import {
   BinaryExpr,
   Identifier,
   IfElseStatement,
+  NestedBlock,
   // IfElseStatement,
   NumericLiteral,
   Program,
@@ -14,7 +15,12 @@ import {
   VarDeclaration,
 } from "../frontend/ast"
 
-import { eval_if_else_statement, eval_program, eval_var_declaration } from "./eval/statements"
+import {
+  eval_if_else_statement,
+  eval_nested_block,
+  eval_program,
+  eval_var_declaration,
+} from "./eval/statements"
 import {
   eval_array_expr,
   eval_assignment,
@@ -44,6 +50,8 @@ export function evaluate(astNode: Stmt, env: Environment): RuntimeVal {
       return eval_array_expr(astNode as ArrayLiteral, env)
     case "VarDeclaration":
       return eval_var_declaration(astNode as VarDeclaration, env)
+    case "NestedBlock":
+      return eval_nested_block(astNode as NestedBlock, env)
     case "IfElseStatement":
       return eval_if_else_statement(astNode as IfElseStatement, env)
 

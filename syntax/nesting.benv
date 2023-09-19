@@ -1,10 +1,21 @@
+ROOT_VAR="root_value"
+
 DEV:
 	HOST="localhost"
 	PORT=5000
 	DB:
-		USERNAME="admin"
-		PASSWORD=123456
+		USERNAME="$ROOT_VAR.admin"
+		PASSWORD="$USERNAME.$PORT.12345"
 	SECURE=false
+
+
+STAGE:
+	HOST="stage.cool.com"
+	PORT=8080
+	DB:
+		USERNAME="admin"
+		PASSWORD="136_pass"
+	SECURE=true
 
 
 PROD:
@@ -15,4 +26,6 @@ PROD:
 		PASSWORD="136_@rongPas."
 	SECURE=true
 
-ENV="prod"
+ENV="dev"
+LANG=if (ENV == "prod") "en/US" else "fr/FR"
+

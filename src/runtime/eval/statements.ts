@@ -1,8 +1,8 @@
-import { Expr, IfElseStatement, Program, Stmt, VarDeclaration } from "../../frontend/ast"
+import { Expr, IfElseStatement, NestedBlock, Program, VarDeclaration } from "../../frontend/ast"
 import Environment from "../environment"
 import { evaluate } from "../interpreter"
 import { MK_NULL } from "../macros"
-import { BooleanVal, RuntimeVal } from "../values"
+import { BooleanVal, RuntimeVal, ScopeVal } from "../values"
 
 export function eval_program(program: Program, env: Environment): RuntimeVal {
   let evaluated: RuntimeVal = MK_NULL()
@@ -16,19 +16,6 @@ export function eval_var_declaration(declaration: VarDeclaration, env: Environme
   const value = evaluate(declaration.value, env)
 
   return env.declareVar(declaration.identifier, value)
-}
-
-export function eval_code_block(block: Stmt[], parentEnv: Environment): RuntimeVal {
-  const scope = new Environment(parentEnv)
-
-  let result: RuntimeVal = MK_NULL()
-
-  for (const stmt of block) {
-    result = evaluate(stmt, scope)
-    if (result.type == "return" || result.returned) return { ...result, returned: true }
-  }
-
-  return MK_NULL()
 }
 
 export function eval_condition(check: Expr, env: Environment): BooleanVal {
@@ -57,4 +44,12 @@ export function eval_if_else_statement(ifstmt: IfElseStatement, env: Environment
   } else if (ifstmt.else) result = evaluate(ifstmt.else, env)
 
   return result
+}
+
+export function eval_nested_block(block: NestedBlock, parentEnv: Environment): RuntimeVal {
+  const scope = new Environment(parentEnv)
+
+  for (const stmt of block.variables) evaluate(stmt, scope)
+
+  return { type: "scope", value: scope } as ScopeVal
 }

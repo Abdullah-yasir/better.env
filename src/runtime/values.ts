@@ -11,11 +11,9 @@ export type ValueType =
   | "function"
   | "return"
   | "paramter"
-  | "conditional"
-  | "whileloop"
   | "array"
   | "dynamic"
-  | "docs"
+  | "scope"
 
 export interface RuntimeVal {
   type: ValueType
@@ -73,25 +71,12 @@ export interface ReturnVal extends RuntimeVal {
   value: RuntimeVal
 }
 
-export interface ConditionalVal extends RuntimeVal {
-  type: "conditional"
-  check: RuntimeVal
-  body: Stmt[]
-  childChecks?: ConditionalVal[]
-  else?: Stmt[]
-}
-
-export interface WhileLoopVal extends RuntimeVal {
-  type: "whileloop"
-  check: RuntimeVal
-  body: Stmt[]
-}
-
 export interface ArrayVal extends RuntimeVal {
   type: "array"
   elements: RuntimeVal[]
 }
 
-export interface DocCommentVal extends RuntimeVal {
-  type: "docs"
+export interface ScopeVal extends RuntimeVal {
+  type: "scope"
+  value: Environment
 }
