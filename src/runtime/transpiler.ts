@@ -2,12 +2,12 @@ import { writeFile } from "fs"
 import Environment from "./environment"
 import { ArrayVal, BooleanVal, NumberVal, RuntimeVal, ScopeVal, StringVal } from "./values"
 
-type EnvEntity = {
+export type EnvEntity = {
   key: string
   value: RuntimeVal
 }
 
-type Primitive = NumberVal | StringVal | BooleanVal
+export type Primitive = NumberVal | StringVal | BooleanVal
 
 function getKeyVals(scope: Environment, parentName = ""): EnvEntity[] {
   const generated: EnvEntity[] = []

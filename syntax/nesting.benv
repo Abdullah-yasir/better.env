@@ -1,8 +1,8 @@
 ROOT_VAR="root_value"
 
 DEV:
-	HOST="localhost"
 	PORT=5000
+	HOST="https://localhost:$PORT"
 	DB:
 		USERNAME="$ROOT_VAR.admin"
 		PASSWORD="$USERNAME.$PORT.12345"
