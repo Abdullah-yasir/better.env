@@ -1,0 +1,10 @@
+PROD:
+	HOST="app.cool.com"
+	PORT=8080
+	DB:
+		USERNAME="admin"
+		PASSWORD="136_@rongPas."
+	SECURE=true
+
+
+NEW_BLOCK=PROD

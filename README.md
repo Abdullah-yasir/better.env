@@ -183,6 +183,13 @@ To interpolate expressions inside the string, wrap expression inside ${ and }
 BASE=50
 BUILD_NUMBER="build: ${BASE + 45}"
 ```
+
+#### Conditionals
+**better.env** supports its own version of `if-else` statements, so you can conditionally assign values
+```bash
+ENV="dev"
+UPLOAD_ON=if(ENV == "prod") "aws" else "server"
+```
 #### Indented Blocks
 Isolated scopes can be created by nested the key values pairs under a key
 ```bash
@@ -261,4 +268,12 @@ new BetterDotEnv({
 // ...
 ```
 > If you've configurations both in `.benvrc` and the Constructor, the one in Contructor will have higher precedence, and will override same configurations from `.benvrc`
-### FAQs
+### Feature Requests
+- Assign a complete block to a variable, so that the variables of that block are assigned to assignee
+- Ability to create private variables that do not get transpiled
+- Add string helper methods
+	- length(str)
+	- contains(str, needle)
+	- startsWith(str, needle)
+	- endsWidth(str, needle)
+	- substring(str, start, end)
