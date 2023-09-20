@@ -45,7 +45,7 @@
 	touch environment.benv
 	```
 	> If you are on Windows OS, make sure to run above command in `bash` terminal. `touch` command is not available in `Commad Prompt` or `Power Shell`
-3. Add your variables
+3. Run below command to add the example variables to the file you've created
 	```bash
 	echo << EOF
 	ENV="prod" 
@@ -194,7 +194,7 @@ ENV="dev"
 UPLOAD_ON=if(ENV == "prod") "aws" else "server"
 ```
 #### Indented Blocks
-Isolated scopes can be created by nested the key values pairs under a key
+Isolated scopes can be created by nesting the key values pairs under a key
 ```bash
 DEV: 
 	PORT=5000
@@ -208,7 +208,7 @@ DEV:
 ```
 
 #### Block Assignement
-A block can easily be assigned to a variable
+A block can easily be assigned to a variable, by doing so variables of the block will get assigned to that particular variable.
 ```bash
 PROD:
 	HOST="app.cool.com"
@@ -220,7 +220,7 @@ PROD:
 
 VARS=PROD
 ```
-Now `VARS` will have all the values of `PROD` and will get transpiled like this
+Now `VARS` will have all the values of `PROD` and will get transpiled like this.
 ```bash
 # PROD will get printed here
 
@@ -313,10 +313,12 @@ new BetterDotEnv({
 // ...
 ```
 > If you've configurations both in `.benvrc` and the Constructor, the one in Contructor will have higher precedence, and will override same configurations from `.benvrc`
-### Feature Requests
-- Assign a complete block to a variable, so that the variables of that block are assigned to assignee
-- Ability to create private variables that do not get transpiled
-- Add string helper methods
+### Feature Tracker
+- Assign a complete block to a variable, so that the variables of that block are assigned to assignee ✅
+- Ability to create private variables that do not get transpiled ✅
+- Ability to change the behaviour of **better.env** via configurations ⌛
+- Ability to emit env config file in javascript via CLI ⌛
+- Add string helper methods ⌛
 	- length(str)
 	- contains(str, needle)
 	- startsWith(str, needle)
