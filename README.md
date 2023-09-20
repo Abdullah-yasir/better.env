@@ -27,6 +27,7 @@
 - Easily interpolate value of one variable into another
 - Emit regular `.env` if needed
 - No need to install any other package for reading `.env`
+- ... And a lof of others, try it to find out
 
 ### Getting Started
 > There are two ways to use **better.env** in your project:
