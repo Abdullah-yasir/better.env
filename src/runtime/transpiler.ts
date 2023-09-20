@@ -14,6 +14,9 @@ function getKeyVals(scope: Environment, parentName = ""): EnvEntity[] {
   for (const [key, value] of scope.varMap) {
     const varName = parentName ? `${parentName}_${key}` : key
 
+    // skip private variables
+    if (key.startsWith("_")) continue
+
     if (value.type == "array") {
       const _val = value as ArrayVal
       _val.elements.forEach((el, i) => {

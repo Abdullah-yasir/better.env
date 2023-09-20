@@ -1,4 +1,4 @@
-PROD:
+_PROD:
 	HOST="app.cool.com"
 	PORT=8080
 	DB:
@@ -7,4 +7,4 @@ PROD:
 	SECURE=true
 
 
-NEW_BLOCK=PROD
+NEW_BLOCK=_PROD

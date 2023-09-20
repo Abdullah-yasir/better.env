@@ -12,6 +12,8 @@
 	- [Interpolation](#interpolation)
 	- [Expressions](#expressions)
 	- [Indented Blocks](#indented-blocks)
+	- [Block Assignment](#block-assignement)
+	- [Private Variables](#private-variables)
 	- [Variable Scope](#variable-scope)
 	- [Operators](#operators)
 - [Configurations](#configuration) 
@@ -124,7 +126,7 @@
 
 ### Syntax
 #### Key Value Pairs
-Creating a variable, it starts with variable name, then equal sign followed by the value of the variable
+Variable is created by writing its name, then equal sign followed by the value of the variable
 ```bash
 # String
 HOST="http://localhost"
@@ -204,9 +206,51 @@ DEV:
 	SECURE=false
 ```
 
+#### Block Assignement
+A block can easily be assigned to a variable
+```bash
+PROD:
+	HOST="app.cool.com"
+	PORT=8080
+	DB:
+		USERNAME="admin"
+		PASSWORD="136_@rongPas."
+	SECURE=true
+
+VARS=PROD
+```
+Now `VARS` will have all the values of `PROD` and will get transpiled like this
+```bash
+# PROD will get printed here
+
+# VARS have all the values of PROD
+VARS_HOST=app.cool.com
+VARS_PORT=8080
+VARS_DB_USERNAME=admin
+VARS_DB_PASSWORD=136_@rongPas.
+VARS_SECURE=true
+```
+#### Private Variables
+Sometime you might need some variables internally and don't want them to get transpiled to the results. 
+In such case, you can mark them as private by prefixing them with `_`
+
+Let's redo an example from above section
+
+```bash
+_BASE:
+	HOST="app.cool.com"
+	PORT=8080
+	DB:
+		USERNAME="admin"
+		PASSWORD="136_@rongPas."
+	SECURE=true
+
+ENV=_BASE
+```
+Now in this case `_BASE` will not get printed, but `ENV` will.
 #### Variable Scope
 - Child scope can read any variable in any of the parent scopes but not other way round. 
-- And sibling scopes can also not read a value of one and another.
+- And sibling scopes can also not read a value of each other.
 
 #### Operators
 | Operator | Description            |
