@@ -1,57 +1,123 @@
 import { BuiltIn } from "../../types"
 import Environment from "../environment"
-import { MK_NATIVE_FN, MK_NULL } from "../macros"
-import {
-  ArrayVal,
-  BooleanVal,
-  FunctionVal,
-  NullVal,
-  NumberVal,
-  ReturnVal,
-  RuntimeVal,
-  StringVal,
-} from "../values"
+import { MK_NATIVE_FN } from "../macros"
+import { ArrayVal, StringVal } from "../values"
 
 const functions: BuiltIn[] = [
   {
-    name: "print",
-    value: MK_NATIVE_FN((args: RuntimeVal[], _: Environment) => {
-      const getValue = (arg: RuntimeVal): any => {
-        const argType = arg.type
-        if (
-          argType == "string" ||
-          argType == "number" ||
-          argType == "boolean" ||
-          argType == "null"
-        ) {
-          return (arg as StringVal | NumberVal | BooleanVal | NullVal).value
-        } else if (argType == "array") {
-          return (arg as ArrayVal).elements.map(getValue)
-        } else if (argType == "function") {
-          const fn = arg as FunctionVal
-          return `fn ${fn.name}(${fn.parameters
-            .map((p) => `${p.name}: ${p.valueType || "dynamic"}`)
-            .join()})`
-        } else if (argType == "return") {
-          return getValue((arg as ReturnVal).value)
-        } else {
-          return arg
-        }
-      }
+    name: "len",
+    value: MK_NATIVE_FN((args: any[], _: Environment) => {
+      const val = args[0]
+      if (val.type === "array")
+        return { type: "number", value: (val as ArrayVal).elements.length, returned: false }
 
-      console.log(...args.map((arg) => getValue(arg)))
+      if (val.type === "string")
+        return { type: "number", value: (val as StringVal).value.length, returned: false }
 
-      return MK_NULL()
+      throw new Error(`Cannot get length of type '${val.type}'`)
     }),
     modifier: "final",
   },
 
   {
-    name: "length",
+    name: "has",
     value: MK_NATIVE_FN((args: any[], _: Environment) => {
-      const arr = args[0] as ArrayVal
-      if (arr.type !== "array") throw new Error(`Cannot get length of type '${arr.type}'`)
-      return { type: "number", value: arr.elements.length, returned: false }
+      const val = args[0]
+      const needle = args[1]
+      if (val.type === "array")
+        return {
+          type: "boolean",
+          value: (val as ArrayVal).elements.includes(needle),
+          returned: false,
+        }
+
+      if (val.type === "string")
+        return {
+          type: "boolean",
+          value: (val as StringVal).value.includes(needle),
+          returned: false,
+        }
+
+      throw new Error(`Cannot call 'has' on type '${val.type}'`)
+    }),
+    modifier: "final",
+  },
+
+  {
+    name: "starts",
+    value: MK_NATIVE_FN((args: any[], _: Environment) => {
+      const val = args[0]
+      const needle = args[1]
+
+      if (val.type === "string")
+        return {
+          type: "boolean",
+          value: (val as StringVal).value.startsWith(needle),
+          returned: false,
+        }
+
+      throw new Error(`Cannot call 'startsWith' on type '${val.type}'`)
+    }),
+    modifier: "final",
+  },
+
+  {
+    name: "ends",
+    value: MK_NATIVE_FN((args: any[], _: Environment) => {
+      const val = args[0]
+      const needle = args[1]
+
+      if (val.type === "string")
+        return {
+          type: "boolean",
+          value: (val as StringVal).value.endsWith(needle),
+          returned: false,
+        }
+
+      throw new Error(`Cannot call 'endsWith' on type '${val.type}'`)
+    }),
+    modifier: "final",
+  },
+
+  {
+    name: "str",
+    value: MK_NATIVE_FN((args: any[], _: Environment) => {
+      const val = args[0]
+
+      if (val.type === "number")
+        return {
+          type: "string",
+          value: (val as StringVal).value.toString(),
+          returned: false,
+        }
+
+      throw new Error(`Cannot call 'toString' on type '${val.type}'`)
+    }),
+    modifier: "final",
+  },
+
+  {
+    name: "slice",
+    value: MK_NATIVE_FN((args: any[], _: Environment) => {
+      const val = args[0]
+      const start = args[1]
+      const end = args[2]
+
+      if (val.type === "array")
+        return {
+          type: "boolean",
+          value: (val as ArrayVal).elements.slice(start, end),
+          returned: false,
+        }
+
+      if (val.type === "string")
+        return {
+          type: "boolean",
+          value: (val as StringVal).value.slice(start, end),
+          returned: false,
+        }
+
+      throw new Error(`Cannot call 'slice' on type '${val.type}'`)
     }),
     modifier: "final",
   },

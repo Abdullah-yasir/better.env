@@ -79,52 +79,50 @@
 	#### Using Command Line
 	> Make sure you've followed the initial steps in [Getting Started](#getting-started)
 	4. Now add a new script in your `package.json`
-		```json
-		"scripts": {
-			...
-			"benv": "benv environment.benv"
-		}
-		```
+	```json
+	"scripts": {
+		...
+		"benv": "benv environment.benv"
+	}
+	```
 	5. Now run newly created `benv` script
-		```bash
-		npm run benv
-		```
+	```bash
+	npm run benv
+	```
 	6. By following above steps, you'll see a new file named `environment.env` is created in your project, take a look and see what you can do with **better.env**
 
 	#### Using Client
 	> Make sure you've followed the initial steps in [Getting Started](#getting-started)
 	4. Create new file named: `config.js` in your project, again you can choose any filename
-		```bash
-		touch config.js
-		```
+	```bash
+	touch config.js
+	```
 	5. Add following code in the file
-		```js
-		const BetterDotEnv = require("@better/env")
+	```js
+	const BetterDotEnv = require("@better/env")
 
-		const client = new BetterDotEnv()
-			.load("path/to/environment.benv")
+	const client = new BetterDotEnv()
+		.load("path/to/environment.benv")
 
-		// Append variables to `process.env`
-		client.append(process.env)
+	// Append variables to `process.env`
+	client.append(process.env)
 
-		// [OR] You can export config object directly without using `process.env`
-		module.exports = client.env
-		```
+	// [OR] You can export config object directly without using `process.env`
+	module.exports = client.env
+	```
 	6. Consuming variables
-		```js
-		const env = require("path/to/config.js")
+	```js
+	const env = require("path/to/config.js")
 
-		console.log(env.ENV)
-		console.log(env.DEV_API_URL)
-		console.log(env.DEV_DB_PORT)
+	console.log(env.ENV)
+	console.log(env.DEV_API_URL)
+	console.log(env.DEV_DB_PORT)
 
-		// [OR] If you've appended variables to `process.env`
-		console.log(process.env.ENV)
-		console.log(process.env.DEV_API_URL)
-		console.log(process.env.DEV_DB_PORT)
-		```
-
-
+	// [OR] If you've appended variables to `process.env`
+	console.log(process.env.ENV)
+	console.log(process.env.DEV_API_URL)
+	console.log(process.env.DEV_DB_PORT)
+	```
 ### Syntax
 #### Key Value Pairs
 Variable is created by writing its name, then equal sign followed by the value of the variable
@@ -141,6 +139,7 @@ UPLOAD_AWS=false
 # Array
 ALLOWED_METHODS=["get", "post", "patch"]
 ```
+---
 #### Arrays
 You can create any array just like you do in `javascript`
 ```bash
@@ -160,6 +159,7 @@ ALLOWED_METHODS_3=patch
 
 See [Configurations](#configuration) section for details.
 
+---
 #### Interpolation
 A value of one variable can be used in another variable, so you've to change it at one place if needed
 ```bash
@@ -167,6 +167,7 @@ PORT=5000
 HOST="http://localhost"
 BASE_URL="$HOST:$PORT"
 ```
+---
 #### Expressions
 You can calculate the value of the variable by doing arithemtic operations
 ```bash
@@ -186,13 +187,14 @@ To interpolate expressions inside the string, wrap expression inside ${ and }
 BASE=50
 BUILD_NUMBER="build: ${BASE + 45}"
 ```
-
+---
 #### Conditionals
 **better.env** supports its own version of `if-else` statements, so you can conditionally assign values
 ```bash
 ENV="dev"
 UPLOAD_ON=if(ENV == "prod") "aws" else "server"
 ```
+---
 #### Indented Blocks
 Isolated scopes can be created by nesting the key values pairs under a key
 ```bash
@@ -206,7 +208,7 @@ DEV:
 		PORT=5432
 	SECURE=false
 ```
-
+---
 #### Block Assignement
 A block can easily be assigned to a variable, by doing so variables of the block will get assigned to that particular variable.
 ```bash
@@ -231,6 +233,8 @@ VARS_DB_USERNAME=admin
 VARS_DB_PASSWORD=136_@rongPas.
 VARS_SECURE=true
 ```
+
+---
 #### Private Variables
 Sometime you might need some variables internally and don't want them to get transpiled to the results. 
 In such case, you can mark them as private by prefixing them with `_`
@@ -249,9 +253,80 @@ _BASE:
 ENV=_BASE
 ```
 Now in this case `_BASE` will not get printed, but `ENV` will.
+
+---
 #### Variable Scope
 - Child scope can read any variable in any of the parent scopes but not other way round. 
 - And sibling scopes can also not read a value of each other.
+
+---
+#### Built-in Functions
+**better.env** has some built-in functions as follows
+- `len` \
+	Gets the length of an array or a string
+```typescript
+ len(value: string | Array) => number
+```
+```bash
+# example
+PASSWORD="slkf29fj-2f4;9cj.43"
+PASS_STRENGTH=if (len(PASSWORD) > 15) "strong" else "weak" 
+```
+- `has` \
+	Checks whether the array or a string contains the given value
+```typescript
+ has(value: string | Array, needle: string | number) => boolean
+```
+```bash
+# example
+HOST="https://api.app.com"
+IS_SECURE=has(HOST, "https") # true
+
+# For arrays
+METHODS=["get", "put", "post", "patch"]
+ALLOW_DELETE=has(METHODS, "delete") # false
+```
+- `starts` \
+	Returns true if a string starts with a given value, false otherwise
+```typescript
+ starts(value: string, needle: string) => boolean
+```
+```bash
+# example
+HOST="https://api.app.com"
+IS_SECURE=starts(HOST, "https") # true
+```
+- `ends` \
+	Returns true if a string ends with a given value, false otherwise
+```typescript
+ ends(value: string, needle: string) => boolean
+```
+```bash
+# example
+HOST="https://www.app.dev"
+IS_PROD=ends(HOST, ".com") # false
+```
+- `str` \
+	Converts the given number to string, it is useful when you need to invoke string functions on a number.
+```typescript
+ str(value: number | boolean) => string
+```
+```bash
+# example
+VAR=str(5000) # "5000"
+```
+- `slice` \
+	Returns the subset of an array or a string, from start index to end index.
+```typescript
+ slice(value: string | Array, start: number, end: number) => Array | string
+```
+```bash
+# example
+VAR=slice("This is cool", 0, 3) # "This"
+
+# For arrays
+ARR=slice(["get", "put", "post"], 0, 1) # "get"
+```
 
 #### Operators
 | Operator | Description            |
@@ -319,8 +394,8 @@ new BetterDotEnv({
 - Ability to change the behaviour of **better.env** via configurations ⌛
 - Ability to emit env config file in javascript via CLI ⌛
 - Add string helper methods ⌛
-	- length(str)
-	- contains(str, needle)
-	- startsWith(str, needle)
-	- endsWidth(str, needle)
-	- substring(str, start, end)
+	- len(str) ✅
+	- has(str, needle) ✅
+	- starts(str, needle) ✅
+	- ends(str, needle) ✅
+	- slice(str, start, end) ✅
