@@ -27,7 +27,7 @@ export class BetterDotEnv {
   }
 
   get env() {
-    return { ...this._env }
+    return this._env
   }
 
   /**
@@ -36,18 +36,15 @@ export class BetterDotEnv {
    */
   load(filename: string): BetterDotEnv {
     const input = readFileSync(validateFilename(filename), { encoding: "utf-8" })
-
     const parser = new Parser()
     const tokenizer = new Tokenizer(specs, filename)
 
     let tokens = tokenizer.tokenize(input)
-
     tokens = new Organizer().organize(tokens).filter().filter().tokens
 
     const program = parser.produceAST(tokens)
 
     evaluate(program, this._localEnv)
-
     this._transpile()
 
     return this
@@ -58,7 +55,7 @@ export class BetterDotEnv {
    * @param anyObject The object to append env key value pairs to
    * @example
    * ```javascript
-   * // In this example we loading the `env` and appending to `process.env`
+   * // Load the `benv` and append to `process.env`
    * new Client().load("./benv/main.benv").append(process.env)
    * ```
    */
@@ -71,17 +68,17 @@ export class BetterDotEnv {
   /**
    * Creates a .env file
    */
-  emit(filename: string, onError: (err: Error) => void) {
+  emit(filePath: string, onError: (err: Error) => void) {
     const envText = this._keyVals
       .map(({ key, value }) => `${key}=${(value as Primitive).value}`)
       .join("\n")
 
-    const __ = filename.split("/")
+    const _ = filePath.split("/")
 
-    if (__.length) {
-      const _fname = __[__.length - 1].split(".")[0] + ".env"
+    if (_.length) {
+      const filename = _[_.length - 1].split(".")[0] + ".env"
 
-      writeFile(_fname, envText, { encoding: "utf-8" }, (err) => {
+      writeFile(filename, envText, { encoding: "utf-8" }, (err) => {
         if (err) {
           if (onError) onError(err)
           else console.error("Unable to generate .env")
@@ -94,6 +91,8 @@ export class BetterDotEnv {
     this._keyVals = this._getKeyVals(this._localEnv)
 
     for (const { key, value } of this._keyVals) this._env[key] = value
+
+    this._env = Object.freeze(this._env)
   }
 
   private _getKeyVals(scope: Environment, parentName = ""): EnvEntity[] {

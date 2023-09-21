@@ -13,13 +13,15 @@ function getKeyVals(scope: Environment, parentName = ""): EnvEntity[] {
   const generated: EnvEntity[] = []
   for (const [key, value] of scope.varMap) {
     const varName = parentName ? `${parentName}_${key}` : key
-
-    // skip private variables
-    if (key.startsWith("_")) continue
+    
+    if (key.startsWith("_")) continue // skip private variables
 
     if (value.type == "array") {
       const _val = value as ArrayVal
       _val.elements.forEach((el, i) => {
+        if (el.type == "scope") {
+          el = { type: "string", value: "<BLOCK>" } as StringVal
+        }
         generated.push({ key: `${varName}_${i + 1}`, value: el })
       })
       continue
