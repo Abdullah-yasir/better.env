@@ -1,22 +1,8 @@
-_PROD:
+PROD:
 	HOST="app.cool.com"
 	PORT=8080
 	DB:
 		USERNAME="admin"
 		PASSWORD="136_@rongPas."
-	SECURE=true
 
-APP=_PROD
-
-# or
-
-_:
-	ENV:
-		HOST="app.cool.com"
-		PORT=8080
-		DB:
-			USERNAME="admin"
-			PASSWORD="136_@rongPas."
-		SECURE=true
-
-APP_2=_
+APP=PROD

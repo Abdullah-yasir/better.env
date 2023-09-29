@@ -1,0 +1,13 @@
+LEN=len("hello")
+
+STR=str(90)
+
+SLICE=slice("hello", 0, 2)
+SLICE_ARR=slice(["hello", "world", "cool"], 0, 2)
+
+STARTS=starts("hello", "he")
+
+ENDS=ends("hello", "lo")
+
+HAS=has("hello", "ll")
+HAS_ARR=has(["hello", "world"], "hello")

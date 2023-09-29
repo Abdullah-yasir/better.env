@@ -1,7 +1,10 @@
 import { BuiltIn } from "../../types"
 import Environment from "../environment"
 import { MK_NATIVE_FN } from "../macros"
-import { ArrayVal, StringVal } from "../values"
+import { Primitive } from "../transpiler"
+import { ArrayVal, NumberVal, RuntimeVal, StringVal } from "../values"
+
+const __ = (val: RuntimeVal) => (val as Primitive).value
 
 const functions: BuiltIn[] = [
   {
@@ -27,14 +30,14 @@ const functions: BuiltIn[] = [
       if (val.type === "array")
         return {
           type: "boolean",
-          value: (val as ArrayVal).elements.includes(needle),
+          value: (val as ArrayVal).elements.findIndex((val) => __(val) === __(needle)) !== -1,
           returned: false,
         }
 
       if (val.type === "string")
         return {
           type: "boolean",
-          value: (val as StringVal).value.includes(needle),
+          value: (val as StringVal).value.includes(__(needle) as string),
           returned: false,
         }
 
@@ -47,7 +50,7 @@ const functions: BuiltIn[] = [
     name: "starts",
     value: MK_NATIVE_FN((args: any[], _: Environment) => {
       const val = args[0]
-      const needle = args[1]
+      const needle = __(args[1]) as string
 
       if (val.type === "string")
         return {
@@ -65,7 +68,7 @@ const functions: BuiltIn[] = [
     name: "ends",
     value: MK_NATIVE_FN((args: any[], _: Environment) => {
       const val = args[0]
-      const needle = args[1]
+      const needle = __(args[1]) as string
 
       if (val.type === "string")
         return {
@@ -87,7 +90,7 @@ const functions: BuiltIn[] = [
       if (val.type === "number")
         return {
           type: "string",
-          value: (val as StringVal).value.toString(),
+          value: (val as NumberVal).value.toString(),
           returned: false,
         }
 
@@ -100,13 +103,13 @@ const functions: BuiltIn[] = [
     name: "slice",
     value: MK_NATIVE_FN((args: any[], _: Environment) => {
       const val = args[0]
-      const start = args[1]
-      const end = args[2]
+      const start = __(args[1]) as number
+      const end = __(args[2]) as number
 
       if (val.type === "array")
         return {
           type: "boolean",
-          value: (val as ArrayVal).elements.slice(start, end),
+          value: (val as ArrayVal).elements.slice(start, end).map((v) => __(v)),
           returned: false,
         }
 

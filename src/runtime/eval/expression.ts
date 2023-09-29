@@ -1,8 +1,9 @@
-import { ArrayVal, BooleanVal, StringVal } from "./../values"
+import { ArrayVal, BooleanVal, NativeFnVal, StringVal } from "./../values"
 import {
   ArrayLiteral,
   AssignmentExpr,
   BinaryExpr,
+  CallExpr,
   Identifier,
   StringLiteral,
 } from "../../frontend/ast"
@@ -128,4 +129,12 @@ export function eval_string_literal(node: StringLiteral, env: Environment): Runt
   }
 
   return { type: "string", value: str } as StringVal
+}
+
+export function eval_call_expr(expr: CallExpr, env: Environment): RuntimeVal {
+  const args = expr.args.map((arg) => evaluate(arg, env))
+  const fn = evaluate(expr.caller, env)
+
+  const result = (fn as NativeFnVal).call(args, env)
+  return result
 }

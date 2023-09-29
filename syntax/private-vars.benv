@@ -1,0 +1,9 @@
+_DEV:
+	HOST="http://localhost"
+	PORT=3000
+	DB:
+		_PRE="dingo"
+		USERNAME="admin"
+		PASSWORD="136_@rongPas."
+
+APP=_DEV

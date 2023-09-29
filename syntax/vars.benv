@@ -1,6 +1,0 @@
-APP_ENV="dev"
-
-UPLOAD
-	AWS=true
-	AZURE=true
-	LOCAL=!(AWS && AZURE) || APP_ENV == "dev"

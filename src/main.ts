@@ -1,15 +1,6 @@
-import { readFileSync } from "fs"
-
-import Environment from "./runtime/environment"
-import { evaluate } from "./runtime/interpreter"
-
-import Parser from "./frontend/parser"
-import Tokenizer, { Organizer } from "./frontend/lexer/tokenizer"
-import { specs } from "./frontend/lexer/specs"
-
 import { PackageInfo } from "./types"
-import { validateFilename, emitTempFile, readInfo } from "./helpers"
-import { transpile } from "./runtime/transpiler"
+import { readInfo } from "./helpers"
+import { BetterDotEnv } from "./client"
 
 main()
 
@@ -41,26 +32,29 @@ async function main() {
 }
 
 async function run(filename: string) {
-  const input = readFileSync(validateFilename(filename), { encoding: "utf-8" })
+  // const input = readFileSync(validateFilename(filename), { encoding: "utf-8" })
 
-  const globalEnv = new Environment()
-  const env = new Environment(globalEnv)
-  const parser = new Parser()
-  const tokenizer = new Tokenizer(specs, filename)
+  // const globalEnv = new Environment()
+  // const env = new Environment(globalEnv)
+  // const parser = new Parser()
+  // const tokenizer = new Tokenizer(specs, filename)
 
-  let tokens = tokenizer.tokenize(input)
+  // let tokens = tokenizer.tokenize(input)
 
-  tokens = new Organizer().organize(tokens).filter().filter().tokens
+  // tokens = new Organizer().organize(tokens).filter().filter().tokens
 
-  emitTempFile("tokens.json", JSON.stringify(tokens))
+  // emitTempFile("tokens.json", JSON.stringify(tokens))
 
-  const program = parser.produceAST(tokens)
+  // const program = parser.produceAST(tokens)
 
-  emitTempFile("ast.json", JSON.stringify(program))
+  // emitTempFile("ast.json", JSON.stringify(program))
 
-  evaluate(program, env)
+  // evaluate(program, env)
 
-  transpile(filename, env)
+  // transpile(filename, env)
+
+  const createdFile = new BetterDotEnv().load(filename).emit()
+  console.log("Generated:", createdFile)
 }
 
 function showHelp(info: PackageInfo) {

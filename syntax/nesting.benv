@@ -8,16 +8,6 @@ DEV:
 		PASSWORD="$USERNAME.$PORT.12345"
 	SECURE=false
 
-
-STAGE:
-	HOST="stage.cool.com"
-	PORT=8080
-	DB:
-		USERNAME="admin"
-		PASSWORD="136_pass"
-	SECURE=true
-
-
 PROD:
 	HOST="app.cool.com"
 	PORT=8080

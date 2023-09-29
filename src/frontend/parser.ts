@@ -11,10 +11,11 @@ import {
   ArrayLiteral,
   NestedBlock,
   VarDeclaration,
+  CallExpr,
 } from "./ast"
 import { Placholder } from "../helpers"
 import { TokenType, specs } from "./lexer/specs"
-import Tokenizer, { Token } from "./lexer/_tokenizer"
+import Tokenizer, { Token } from "./lexer/tokenizer"
 
 export default class Parser {
   constructor(tokens?: Token[]) {
@@ -151,6 +152,46 @@ export default class Parser {
     return assigne
   }
 
+  private parse_call_member_expr(): Expr {
+    const member = this.parse_primary_expr()
+
+    if (this.at().type == TokenType.OpenParen) return this.parse_call_expr(member)
+
+    return member
+  }
+
+  private parse_call_expr(caller: Expr): Expr {
+    const call_expr: Expr = {
+      kind: "CallExpr",
+      caller,
+      args: this.parse_args(),
+    } as CallExpr
+
+    // to handle foo.x()()
+    // if (this.at().type == TokenType.OpenParen) call_expr = this.parse_call_expr(call_expr)
+
+    return call_expr
+  }
+
+  private parse_args(): Expr[] {
+    this.expect(TokenType.OpenParen, "Expected open paren")
+    const args = this.at().type == TokenType.CloseParen ? [] : this.parse_args_list()
+
+    this.expect(TokenType.CloseParen, "Missing closing paren")
+
+    return args
+  }
+
+  private parse_args_list(): Expr[] {
+    // parsing assignment expr, so that we can first assign, then pass
+    // i.e foo(x=5, bar="heavy")
+    const args = [this.parse_assignment_expr()]
+
+    while (this.at().type == TokenType.Comma && this.eat()) args.push(this.parse_assignment_expr())
+
+    return args
+  }
+
   private parse_array_expr(): Expr {
     this.eat() // eat [ token
 
@@ -218,11 +259,11 @@ export default class Parser {
 
   // REQ
   private parse_multipicative_expr(): Expr {
-    let left = this.parse_primary_expr()
+    let left = this.parse_call_member_expr()
 
     while (this.at().type == TokenType.MulitipicativeOperator) {
       const operator = this.eat().value
-      const right = this.parse_primary_expr()
+      const right = this.parse_call_member_expr()
       left = {
         kind: "BinaryExpr",
         left,
@@ -248,14 +289,12 @@ export default class Parser {
 
       if (matches.length) {
         let i = 0
-        const results = matches.map((match: string) => match.replace(regex, "$1")) // remove ${ } from expressions
-
-        // replace expressions with placeholders
-        outputString = inputString.replace(regex, () => Placholder.expr(i++))
+        outputString = inputString.replace(regex, () => Placholder.expr(i++)) // replace all expressions with placeholders
 
         // parse the expressions
+        const results = matches.map((match: string) => match.replace(regex, "$1")) // remove ${ } from expressions
         results.forEach((exprStr: string, i: number) => {
-          const tokens = new Tokenizer(specs, "string interpolation").tokenize(exprStr)
+          const tokens = new Tokenizer(specs, "").tokenize(exprStr)
           expressions[Placholder.expr(i)] = new Parser(tokens).parse_expr()
         })
       }

@@ -1,6 +1,5 @@
 BUCKET_SIZE=50
-
-SOME_VAR=BUCKET_SIZE > 100
-
 DEPLOY=if(BUCKET_SIZE == 50) "azure" else "aws"
-STATUS=if (DEPLOY == "aws") "kill" else "on"
+STATUS=if(DEPLOY == "aws") "min-uploads" 
+		else if(DEPLOY == "azure") "max-uploads"
+		else "no-uploads"
