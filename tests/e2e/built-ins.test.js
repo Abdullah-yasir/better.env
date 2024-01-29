@@ -1,5 +1,5 @@
 const fs = require("fs")
-const { BetterDotEnv } = require("../dist/client")
+const { BetterDotEnv } = require("../../dist/client")
 
 jest.mock("fs")
 

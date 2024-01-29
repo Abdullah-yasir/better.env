@@ -1,0 +1,5 @@
+VAR="hello world"
+
+ROOT:
+	VAR_1="var 1"
+	VAR_2="var 2"

@@ -1,5 +1,5 @@
-const { BetterDotEnv } = require("../dist/client")
-const { executeCommand, readFile, deleteFile } = require("./_helpers")
+const { BetterDotEnv } = require("../../dist/client")
+const { executeCommand, readFile, deleteFile } = require("../_helpers")
 
 const outputEnv = `PROD_HOST=app.cool.com
 PROD_PORT=8080

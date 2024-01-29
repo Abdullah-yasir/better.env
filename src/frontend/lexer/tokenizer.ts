@@ -11,7 +11,7 @@ export type Token = {
   code?: string
 }
 
-export default class Tokenizer {
+export class Tokenizer {
   private _spec: Spec[]
   private _tokens: Token[] = []
 

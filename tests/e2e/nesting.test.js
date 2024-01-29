@@ -1,5 +1,5 @@
-const { executeCommand, readFile, deleteFile } = require("./_helpers")
-const { BetterDotEnv } = require("./../dist/client")
+const { executeCommand, readFile, deleteFile } = require("../_helpers")
+const { BetterDotEnv } = require("../../dist/client")
 
 const outputEnv = `ROOT_VAR=root_value
 DEV_PORT=5000

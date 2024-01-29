@@ -1,5 +1,5 @@
-const { BetterDotEnv } = require("../dist/client")
-const { executeCommand, readFile, deleteFile } = require("./_helpers")
+const { BetterDotEnv } = require("../../dist/client")
+const { executeCommand, readFile, deleteFile } = require("../_helpers")
 
 const outputEnv = `
 BUCKET_SIZE=50

@@ -15,7 +15,7 @@ import {
 } from "./ast"
 import { Placholder } from "../helpers"
 import { TokenType, specs } from "./lexer/specs"
-import Tokenizer, { Token } from "./lexer/tokenizer"
+import { Tokenizer, Token } from "./lexer/tokenizer"
 
 export default class Parser {
   constructor(tokens?: Token[]) {

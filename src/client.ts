@@ -1,6 +1,6 @@
 import fs from "fs"
 
-import Tokenizer, { Organizer } from "./frontend/lexer/tokenizer"
+import { Tokenizer, Organizer } from "./frontend/lexer/tokenizer"
 import Parser from "./frontend/parser"
 
 import Environment from "./runtime/environment"
