@@ -93,7 +93,7 @@ export function eval_binary_expr(binop: BinaryExpr, env: Environment): RuntimeVa
 
   // One or both are NULL
   throw new Error(
-    `Unable to perform '${binop.operator}' operation on '${lhs.value}' and '${rhs.value}'`
+    `TYPE_MISMATCH: Unable to perform '${binop.operator}' operation on '${lhs.value}' and '${rhs.value}'`
   )
 }
 
