@@ -9,7 +9,7 @@
     "build": "tsc",
     "benv": "tsc && node ./dist/main.js",
     "watch": "tsc --watch",
-    "test": "jest",
+    "test": "npm run build && jest",
     "lint": "eslint .  --ignore-path .eslintignore",
     "lint:fix": "eslint -- --fix"
   },
