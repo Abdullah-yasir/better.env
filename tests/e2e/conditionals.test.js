@@ -1,10 +1,5 @@
 const { BetterDotEnv } = require("../../dist/client")
-const { executeCommand, readFile, deleteFile } = require("../_helpers")
-
-const outputEnv = `
-BUCKET_SIZE=50
-DEPLOY=azure
-STATUS=max-uploads`
+const { executeCommand, readFile, deleteFile, objectToEnv } = require("../_helpers")
 
 const ouputEnvObj = {
   BUCKET_SIZE: 50,
@@ -12,7 +7,9 @@ const ouputEnvObj = {
   STATUS: "max-uploads",
 }
 
-const benvFile = "./syntax/conditional.benv"
+const outputEnv = objectToEnv(ouputEnvObj)
+
+const benvFile = __dirname + "/syntax/conditional.benv"
 
 describe("Conditionals", () => {
   describe("Client", () => {

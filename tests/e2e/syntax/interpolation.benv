@@ -2,4 +2,4 @@ HOST="localhost"
 PORT=3000
 BASE_URL="$HOST:$PORT"
 API_URL="${BASE_URL}/api/v1"
-SECURE_MSG="This url is ${if (has(HOST, 'https')) 'secure' else 'not secure'}"
+SECURE_MSG="This url is ${if(has(HOST,'https')) 'secure' else 'not secure'}"

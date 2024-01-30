@@ -1,12 +1,5 @@
 const { BetterDotEnv } = require("../../dist/client")
-const { executeCommand, readFile, deleteFile } = require("../_helpers")
-
-const outputEnv = `
-HOST=localhost
-PORT=3000
-BASE_URL=localhost:3000
-API_URL=localhost:3000/api/v1
-SECURE_MSG=This url is not secure`
+const { executeCommand, readFile, deleteFile, objectToEnv } = require("../_helpers")
 
 const ouputEnvObj = {
   HOST: "localhost",
@@ -16,7 +9,9 @@ const ouputEnvObj = {
   SECURE_MSG: "This url is not secure",
 }
 
-const benvFile = "./syntax/interpolation.benv"
+const outputEnv = objectToEnv(ouputEnvObj)
+
+const benvFile = __dirname + "/syntax/interpolation.benv"
 
 describe("Interpolation", () => {
   describe("Client", () => {

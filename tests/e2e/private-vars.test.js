@@ -1,11 +1,5 @@
 const { BetterDotEnv } = require("../../dist/client")
-const { executeCommand, readFile, deleteFile } = require("../_helpers")
-
-const outputEnv = `
-APP_HOST=http://localhost
-APP_PORT=3000
-APP_DB_USERNAME=admin
-APP_DB_PASSWORD=136_@rongPas.`
+const { executeCommand, readFile, deleteFile, objectToEnv } = require("../_helpers")
 
 const ouputEnvObj = {
   APP_HOST: "http://localhost",
@@ -14,7 +8,9 @@ const ouputEnvObj = {
   APP_DB_PASSWORD: "136_@rongPas.",
 }
 
-const benvFile = "./syntax/private-vars.benv"
+const outputEnv = objectToEnv(ouputEnvObj)
+
+const benvFile = __dirname + "/syntax/private-vars.benv"
 
 describe("Private Variables", () => {
   describe("Client", () => {

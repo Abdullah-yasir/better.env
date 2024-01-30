@@ -51,3 +51,9 @@ module.exports.envTextToObject = function (text) {
 
   return result
 }
+
+module.exports.objectToEnv = function (obj) {
+  return Object.entries(obj)
+    .map(([key, value]) => `${key}=${value}`)
+    .join("\n")
+}
