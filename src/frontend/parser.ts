@@ -309,7 +309,9 @@ export default class Parser {
 
         // parse the expressions
         results.forEach((exprStr: string, i: number) => {
-          const tokens = new Tokenizer(specs, "").tokenize(exprStr)
+          const tokens = new Tokenizer(specs, "")
+            .tokenize(exprStr)
+            .filter((t) => t.type != TokenType.WhiteSpace)
           expressions[Placholder.expr(i)] = new Parser(tokens).parse_expr()
         })
       }
