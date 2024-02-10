@@ -83,7 +83,7 @@ export class Tokenizer {
     }
 
     throw new Error(
-      `Unexpected token '${code[0]}' at ${this._line}:${this._tokenNumber} in ${this._filename}`
+      `Unexpected token '${code[0]}' at ${this._line}:${this._tokenNumber} in ${this._filename}`,
     )
   }
 
@@ -180,7 +180,7 @@ export class Organizer {
   filter() {
     this._tokens = this._tokens.filter(({ type }, index) => {
       const skippable = [TokenType.WhiteSpace, TokenType.SingleLineComment, TokenType.EOL].includes(
-        type
+        type,
       )
 
       // skip colon token before indent token

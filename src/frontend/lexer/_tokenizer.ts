@@ -108,7 +108,7 @@ export default class Tokenizer {
     }
 
     throw new Error(
-      `Unexpected token '${code[0]}' at ${this._line}:${this._tokenNumber} in ${this._filename}`
+      `Unexpected token '${code[0]}' at ${this._line}:${this._tokenNumber} in ${this._filename}`,
     )
   }
 

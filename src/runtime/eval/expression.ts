@@ -14,7 +14,7 @@ import { NumberVal, RuntimeVal } from "../values"
 function eval_numeric_binary_expr(
   lhs: NumberVal,
   rhs: NumberVal,
-  operator: string
+  operator: string,
 ): NumberVal | BooleanVal {
   if ([">", "<", "==", "!=", "==", ">=", "<="].includes(operator)) {
     let result = false
@@ -42,7 +42,7 @@ function eval_numeric_binary_expr(
 export function eval_string_binary_expr(
   lhs: StringVal,
   rhs: StringVal,
-  operator: string
+  operator: string,
 ): BooleanVal {
   let result = false
 
@@ -55,7 +55,7 @@ export function eval_string_binary_expr(
 export function eval_boolean_binary_expr(
   lhs: BooleanVal,
   rhs: BooleanVal,
-  operator: string
+  operator: string,
 ): BooleanVal {
   let result = false
 
@@ -93,7 +93,7 @@ export function eval_binary_expr(binop: BinaryExpr, env: Environment): RuntimeVa
 
   // One or both are NULL
   throw new Error(
-    `TYPE_MISMATCH: Unable to perform '${binop.operator}' operation on '${lhs.value}' and '${rhs.value}'`
+    `TYPE_MISMATCH: Unable to perform '${binop.operator}' operation on '${lhs.value}' and '${rhs.value}'`,
   )
 }
 
