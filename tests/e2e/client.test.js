@@ -8,8 +8,8 @@ const outputObj = {
   DEV_DB_USERNAME: "root_value.admin",
   DEV_DB_PASSWORD: "root_value.admin.5000.12345",
   DEV_SECURE: false,
-  PROD_HOST: "app.cool.com",
   PROD_PORT: 8080,
+  PROD_HOST: "app.cool.com",
   PROD_DB_USERNAME: "admin",
   PROD_DB_PASSWORD: "136_@rongPas.",
   PROD_SECURE: true,
@@ -17,9 +17,11 @@ const outputObj = {
   LANG: "fr/FR",
 }
 
+const benvFile = __dirname + "/syntax/nesting.benv"
+
 describe("Client", () => {
   it("should load benv from file", () => {
-    const env = new BetterDotEnv().load("./syntax/nesting.benv").env
+    const env = new BetterDotEnv().load(benvFile).env
     expect(env).toEqual(outputObj)
   })
 
@@ -28,13 +30,13 @@ describe("Client", () => {
       EXISITING_VAR1: "HELLO",
       EXISITING_VAR2: "HELLO 2",
     }
-    new BetterDotEnv().load("./syntax/nesting.benv").append(env)
+    new BetterDotEnv().load(benvFile).append(env)
     expect(env).toEqual({ ...env, ...outputObj })
   })
 
   it("should emit .env file", async () => {
     const filePath = "./prod.env"
-    new BetterDotEnv().load("./syntax/nesting.benv").emit(filePath)
+    new BetterDotEnv().load(benvFile).emit(filePath)
 
     const env = await readFile(filePath)
     const envText = Object.entries(outputObj)
@@ -47,7 +49,7 @@ describe("Client", () => {
   })
 
   it("should not allow to edit env object", () => {
-    const env = new BetterDotEnv().load("./syntax/nesting.benv").env
+    const env = new BetterDotEnv().load(benvFile).env
     env.ADDED_VAR = "cool"
     env.DEV_DB_USERNAME = "new username"
     delete env.DEV_DB_PASSWORD

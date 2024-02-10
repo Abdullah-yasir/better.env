@@ -9,8 +9,8 @@ DEV:
 	SECURE=false
 
 PROD:
-	HOST="app.cool.com"
 	PORT=8080
+	HOST="app.cool.com"
 	DB:
 		USERNAME="admin"
 		PASSWORD="136_@rongPas."
