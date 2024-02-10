@@ -335,7 +335,7 @@ export default class Parser {
     const value = this.parse_expr()
     this.expect(
       TokenType.CloseParen,
-      "Unexpected token found in parenthesized expression. Expected closing paren"
+      "Unexpected token found in parenthesized expression. Expected closing paren",
     ) // eat closing paren
     return value
   }
