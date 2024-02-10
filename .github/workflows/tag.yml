@@ -34,4 +34,6 @@ jobs:
 
     - name: Delete tag if validation fails
       if: failure()
-      run: git push origin :refs/tags/$TAG_VERSION
+      run: |
+        git tag -d ${{ github.ref }}
+        git push origin :refs/tags/${{ github.ref }}
