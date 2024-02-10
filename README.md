@@ -52,24 +52,24 @@
 	ROOT_VAR="root_value" 
 
 	DEV: 
-		PORT=5000
-		HOST="http://localhost"
-		API_URL="$HOST:$PORT/api/v1"
-		DB:
-			USERNAME="$ROOT_VAR.admin"
-			PASSWORD="$USERNAME-12345"
-			PORT=5432
+	  PORT=5000
+	  HOST="http://localhost"
+	  API_URL="$HOST:$PORT/api/v1"
+	  DB:
+		USERNAME="$ROOT_VAR.admin"
+		PASSWORD="$USERNAME-12345"
+		PORT=5432
 		SECURE=false
 
 	PROD:
-		PORT=8080
-		HOST="https://app.cool.com"
-		API_URL="$HOST/api/v1"
-		DB:
-			USERNAME="admin"
-			PASSWORD="136_@rongPas."
-			PORT=5432
-		SECURE=true
+	  PORT=8080
+	  HOST="https://app.cool.com"
+	  API_URL="$HOST/api/v1"
+	  DB:
+		USERNAME="admin"
+		PASSWORD="136_@rongPas."
+		PORT=5432
+	SECURE=true
 
 	UPLOAD_CLOUD=ENV == "prod"
 
@@ -81,8 +81,8 @@
 	4. Now add a new script in your `package.json`
 	```json
 	"scripts": {
-		...
-		"benv": "benv environment.benv"
+	  ...
+	  "benv": "benv environment.benv"
 	}
 	```
 	5. Now run newly created `benv` script
@@ -199,26 +199,26 @@ UPLOAD_ON=if(ENV == "prod") "aws" else "server"
 Isolated scopes can be created by nesting the key values pairs under a key
 ```bash
 DEV: 
-	PORT=5000
-	HOST="http://localhost"
-	API_URL="$HOST:$PORT/api/v1"
-	DB:
-		USERNAME="admin"
-		PASSWORD="$USERNAME-12345-$PORT"
-		PORT=5432
-	SECURE=false
+  PORT=5000
+  HOST="http://localhost"
+  API_URL="$HOST:$PORT/api/v1"
+  DB:
+    USERNAME="admin"
+	PASSWORD="$USERNAME-12345-$PORT"
+	PORT=5432
+SECURE=false
 ```
 ---
 #### Block Assignement
 A block can easily be assigned to a variable, by doing so variables of the block will get assigned to that particular variable.
 ```bash
 PROD:
-	HOST="app.cool.com"
-	PORT=8080
-	DB:
-		USERNAME="admin"
-		PASSWORD="136_@rongPas."
-	SECURE=true
+  HOST="app.cool.com"
+  PORT=8080
+  DB:
+    USERNAME="admin"
+    PASSWORD="136_@rongPas."
+  SECURE=true
 
 VARS=PROD
 ```
@@ -243,12 +243,12 @@ Let's redo an example from above section
 
 ```bash
 _BASE:
-	HOST="app.cool.com"
-	PORT=8080
-	DB:
-		USERNAME="admin"
-		PASSWORD="136_@rongPas."
-	SECURE=true
+  HOST="app.cool.com"
+  PORT=8080
+  DB:
+    USERNAME="admin"
+    PASSWORD="136_@rongPas."
+  SECURE=true
 
 ENV=_BASE
 ```
@@ -346,25 +346,25 @@ ARR=slice(["get", "put", "post"], 0, 1) # "get"
 The behaviour of **better.env** can be modified by specifying below configurations in `.benvrc` file or `BetterDotEnv()` constructor.
 ```javascript
 {
-	arrays: {
-		transpile: true // Wether to convert arrays to numbered variables when emitted to `.env`
-		allow: true // Set it to false if you want to restrict arrays in .benv file
-	},
-	strings: {
-		quotes: false // Wether to surround strins with quotes when emitted to .env
-	},
-	numbers:{
-		toString: false // Convert numbers to string
-	},
-	booleans: {
-		toString: false, // Convert booleans to string
-		// Convert booleans to numbers, i.e 1 for true and 0 for false
-		toNumber: false
-	},
-	benvPath: "", // Where `better.env` should look for .benv files
-	scopeFiles: true, // Whether better.env should append variables from all files to single object, or create a key for each file and then append the variables
-	emitPath: "" // Where to emit .env files
-	emit: false // Whether to create .env files or not
+  arrays: {
+    transpile: true // Wether to convert arrays to numbered variables when emitted to `.env`
+    allow: true // Set it to false if you want to restrict arrays in .benv file
+  },
+  strings: {
+    quotes: false // Wether to surround strins with quotes when emitted to .env
+  },
+  numbers:{
+    toString: false // Convert numbers to string
+  },
+  booleans: {
+    toString: false, // Convert booleans to string
+    // Convert booleans to numbers, i.e 1 for true and 0 for false
+    toNumber: false
+  },
+  benvPath: "", // Where `better.env` should look for .benv files
+  scopeFiles: true, // Whether better.env should append variables from all files to single object, or create a key for each file and then append the variables
+  emitPath: "" // Where to emit .env files
+  emit: false // Whether to create .env files or not
 }
 ```
 > When copy pasting above configurations in `.benvrc` file, make sure you enclose all the keys in double quotes, just like in JSON
@@ -372,18 +372,18 @@ The behaviour of **better.env** can be modified by specifying below configuratio
 For Example
 ```json
 {
-	"arrays": {
-		"transpile": false
-	},
+  "arrays": {
+    "transpile": false
+  },
 }
 ```
 You can use them as is inside the Constructor.
 ```javascript
 // ...
 new BetterDotEnv({
-	arrays: {
-		transpile: false
-	}
+  arrays: {
+    transpile: false
+  }
 })
 // ...
 ```
