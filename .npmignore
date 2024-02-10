@@ -1,0 +1,13 @@
+src/
+tests/
+
+.github/
+.vscode/
+
+.prettierignore
+.prettierrc
+
+.eslintignore
+.eslintrc
+
+tsconfig.json
