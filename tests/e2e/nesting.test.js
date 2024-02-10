@@ -1,19 +1,5 @@
-const { executeCommand, readFile, deleteFile } = require("../_helpers")
+const { executeCommand, readFile, deleteFile, objectToEnv } = require("../_helpers")
 const { BetterDotEnv } = require("../../dist/client")
-
-const outputEnv = `ROOT_VAR=root_value
-DEV_PORT=5000
-DEV_HOST=https://localhost:5000
-DEV_DB_USERNAME=root_value.admin
-DEV_DB_PASSWORD=root_value.admin.5000.12345
-DEV_SECURE=false
-PROD_HOST=app.cool.com
-PROD_PORT=8080
-PROD_DB_USERNAME=admin
-PROD_DB_PASSWORD=136_@rongPas.
-PROD_SECURE=true
-ENV=dev
-LANG=fr/FR`
 
 const outputObj = {
   DEV_DB_PASSWORD: "root_value.admin.5000.12345",
@@ -30,6 +16,8 @@ const outputObj = {
   PROD_SECURE: true,
   ROOT_VAR: "root_value",
 }
+
+const outputEnv = objectToEnv(outputObj)
 
 describe("Indetation", () => {
   describe("Client", () => {

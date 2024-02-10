@@ -1,14 +1,5 @@
 const { BetterDotEnv } = require("../../dist/client")
-const { executeCommand, readFile, deleteFile } = require("../_helpers")
-
-const outputEnv = `PROD_HOST=app.cool.com
-PROD_PORT=8080
-PROD_DB_USERNAME=admin
-PROD_DB_PASSWORD=136_@rongPas.
-APP_HOST=app.cool.com
-APP_PORT=8080
-APP_DB_USERNAME=admin
-APP_DB_PASSWORD=136_@rongPas.`
+const { executeCommand, readFile, deleteFile, objectToEnv } = require("../_helpers")
 
 const ouputEnvObj = {
   PROD_HOST: "app.cool.com",
@@ -21,7 +12,9 @@ const ouputEnvObj = {
   APP_DB_PASSWORD: "136_@rongPas.",
 }
 
-const benvFile = "./syntax/assign-blocks.benv"
+const outputEnv = objectToEnv(ouputEnvObj)
+
+const benvFile = __dirname + "/syntax/assign-blocks.benv"
 
 describe("Block Assignment", () => {
   describe("Client", () => {

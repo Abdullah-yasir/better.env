@@ -5,7 +5,6 @@ import {
   Identifier,
   NumericLiteral,
   BinaryExpr,
-  AssignmentExpr,
   IfElseStatement,
   StringLiteral,
   ArrayLiteral,
@@ -137,20 +136,20 @@ export default class Parser {
 
   // REQ
   private parse_expr(): Expr {
-    return this.parse_assignment_expr()
+    return this.parse_assigne()
   }
 
-  private parse_assignment_expr(): Expr {
-    const assigne = this.parse_assigne()
+  // private parse_assignment_expr(): Expr {
+  //   const assigne = this.parse_assigne()
 
-    if (this.at().type == TokenType.Equals) {
-      this.eat()
-      const value = this.parse_assignment_expr()
-      return { value, assigne, kind: "AssignmentExpr" } as AssignmentExpr
-    }
+  //   if (this.at().type == TokenType.Equals) {
+  //     this.eat()
+  //     const value = this.parse_expr()
+  //     return { value, assigne, kind: "AssignmentExpr" } as AssignmentExpr
+  //   }
 
-    return assigne
-  }
+  //   return assigne
+  // }
 
   private parse_call_member_expr(): Expr {
     const member = this.parse_primary_expr()
@@ -183,11 +182,9 @@ export default class Parser {
   }
 
   private parse_args_list(): Expr[] {
-    // parsing assignment expr, so that we can first assign, then pass
-    // i.e foo(x=5, bar="heavy")
-    const args = [this.parse_assignment_expr()]
+    const args = [this.parse_expr()]
 
-    while (this.at().type == TokenType.Comma && this.eat()) args.push(this.parse_assignment_expr())
+    while (this.at().type == TokenType.Comma && this.eat()) args.push(this.parse_expr())
 
     return args
   }
@@ -214,7 +211,7 @@ export default class Parser {
       return this.parse_array_expr()
     }
 
-    return this.parse_comparitive_expr()
+    return this.parse_gate_expr()
   }
 
   // REQ
@@ -223,11 +220,28 @@ export default class Parser {
 
     while (
       this.at().type == TokenType.RelationalOperator ||
-      this.at().type == TokenType.EqualityOperator ||
-      this.at().type == TokenType.LogicGate
+      this.at().type == TokenType.EqualityOperator
     ) {
       const operator = this.eat().value
       const right = this.parse_additive_expr()
+      left = {
+        kind: "BinaryExpr",
+        left,
+        right,
+        operator,
+      } as BinaryExpr
+    }
+
+    return left
+  }
+
+  // REQ
+  private parse_gate_expr(): Expr {
+    let left = this.parse_comparitive_expr()
+
+    while (this.at().type == TokenType.LogicGate) {
+      const operator = this.eat().value
+      const right = this.parse_comparitive_expr()
       left = {
         kind: "BinaryExpr",
         left,
@@ -285,14 +299,15 @@ export default class Parser {
     // handle expressions
     if (inputString.includes("${")) {
       const regex = /\${(.+?)}/g
-      const matches = inputString.match(regex) || []
+      const matches = inputString.match(regex) || [] // get all interpolated expressions
 
       if (matches.length) {
         let i = 0
         outputString = inputString.replace(regex, () => Placholder.expr(i++)) // replace all expressions with placeholders
 
-        // parse the expressions
         const results = matches.map((match: string) => match.replace(regex, "$1")) // remove ${ } from expressions
+
+        // parse the expressions
         results.forEach((exprStr: string, i: number) => {
           const tokens = new Tokenizer(specs, "").tokenize(exprStr)
           expressions[Placholder.expr(i)] = new Parser(tokens).parse_expr()

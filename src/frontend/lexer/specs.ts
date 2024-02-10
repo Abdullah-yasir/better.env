@@ -40,7 +40,8 @@ export type Spec = {
 }
 
 export const specs: Spec[] = [
-  { regex: /^[+-]?([\d]*[.])?[\d]+/, tokenType: TokenType.NumberLiteral },
+  // { regex: /^[+-]?([\d]*[.])?[\d]+/, tokenType: TokenType.NumberLiteral },
+  { regex: /^([\d]*[.])?[\d]+/, tokenType: TokenType.NumberLiteral },
   { regex: /^"[^"]*"/, tokenType: TokenType.StringLiteral },
   { regex: /^'[^']*'/, tokenType: TokenType.StringLiteral },
 

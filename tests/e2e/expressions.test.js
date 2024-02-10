@@ -1,23 +1,5 @@
 const { BetterDotEnv } = require("../../dist/client")
-const { executeCommand, readFile, deleteFile } = require("../_helpers")
-
-const outputEnv = `
-ADD=68
-SUB=1
-SUB_1=-10
-MUL=45
-DIV=4
-MIX_EXPR=-1
-PAREN_EXPR_1=16
-PAREN_EXPR_2=10
-GREATER=true
-GREATER_EQ=true
-LESS=true
-LESS_EQ=true
-EQUALS=true
-NOT_EQUALS=true
-AND=true
-OR=true`
+const { executeCommand, readFile, deleteFile, objectToEnv } = require("../_helpers")
 
 const ouputEnvObj = {
   ADD: 68,
@@ -35,10 +17,16 @@ const ouputEnvObj = {
   EQUALS: true,
   NOT_EQUALS: true,
   AND: true,
+  AND_1: false,
+  AND_2: false,
   OR: true,
+  OR_1: false,
+  OR_2: true,
 }
 
-const benvFile = "./syntax/expressions.benv"
+const outputEnv = objectToEnv(ouputEnvObj)
+
+const benvFile = __dirname + "/syntax/expressions.benv"
 
 describe("Expressions", () => {
   describe("Client", () => {
